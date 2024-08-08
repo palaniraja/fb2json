@@ -469,6 +469,8 @@ function autoDetectInputDataFormat(userInput) {
         return;
     }
 
+    console.log(`input: [${userInput}]`);
+
     const intArrayRegex = /^(\d+[\s,]*)+$/;
     if (intArrayRegex.test(userInput)) {
         const intArray = userInput.split(/[\s,]+/).map(Number);
@@ -478,6 +480,8 @@ function autoDetectInputDataFormat(userInput) {
 
     //take another pass for base64 by removing newline and spaces
     userInput = userInput.replace(/[\n\s]/g, "");
+
+    console.log(`input-pass2: [${userInput}]`);
 
     const base64Regex =
         /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
@@ -617,6 +621,7 @@ function handleTextInput(event) {
             State.rawData = autoDetect.value;
             validateInputs();
         } catch (err) {
+            console.log(err);
             State.error = `Couldn't detect input data type`;
             updateUIElement(AppUI.parseButton, "disabled", true);
         }
