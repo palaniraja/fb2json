@@ -152,7 +152,7 @@ function processWithFlatc() {
                 }
             });
         })
-        .catch((error) => {
+        .catch((err) => {
             console.log("processWithFlatc err", err);
             updateUIElement(AppUI.parseButton, "disabled", true);
             State.error = err;
@@ -460,13 +460,24 @@ function extractDetectedRoots(fileContent) {
 }
 
 function strippedInput(inputString) {
-    return inputString.replace(/[\[\]\(\)\'\"]/g, "");
+    return inputString.replace(/[\[\]\(\)\'\"\r\n]/g, "");
 }
+
 
 function autoDetectInputDataFormat(userInput) {
     if (userInput.length < 1) {
         return;
     }
+
+    const intArrayRegex = /^(\d+[\s,]*)+$/;
+    if (intArrayRegex.test(userInput)) {
+        const intArray = userInput.split(/[\s,]+/).map(Number);
+        const uint8Array = Uint8Array.from(intArray);
+        return { type: "dec", value: uint8Array };
+    }
+
+    //take another pass for base64 by removing newline and spaces
+    userInput = userInput.replace(/[\n\s]/g, "");
 
     const base64Regex =
         /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
@@ -475,13 +486,6 @@ function autoDetectInputDataFormat(userInput) {
             c.charCodeAt(0)
         );
         return { type: "base64", value: uint8Array };
-    }
-
-    const intArrayRegex = /^(\d+[\s,]*)+$/;
-    if (intArrayRegex.test(userInput)) {
-        const intArray = userInput.split(/[\s,]+/).map(Number);
-        const uint8Array = Uint8Array.from(intArray);
-        return { type: "dec", value: uint8Array };
     }
 
     throw new Error("Not a valid BASE64 or Int array");
