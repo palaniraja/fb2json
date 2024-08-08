@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fb2JSON</title>
+    <link rel="icon" href="data:;base64,=">
+    <link rel="stylesheet" href="css/pico.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <script src="build/flatc.js"></script>
+    <script defer src="js/app.js"></script>
+</head>
+
+<body>
+    <div style="display: flex;">
+        <aside style="width: 30%;">
+            <div id="dropzone">Drop your *.fbs files here</div>
+            <!-- <input type="text" id="search" placeholder="Search..."> <small><button>x</button></small> <a>Del</a> -->
+            <section id="explorer">
+                <section><p class="info info-fail">Error loading Flatbuffers, please reload the page!</p></section>
+                <!-- <details open="">
+                    <summary class="dir"">fb2json <a>Del</a></summary>
+                    <div>
+                      <details>
+                        <summary class="dir">
+                          alarms 
+                        </summary>
+                        <div>
+                          <ul>
+                            <li class="file-list">alarm_config.fbs</li>
+                            <li class="file-list">alarms_initialize_request.fbs</li>
+                  
+                          </ul>
+                        </div>
+                      </details>
+                      <details open="">
+                        <summary class="dir" >
+                          notifications <a>Del</a>
+                        </summary>
+                        <div>
+                          <ul>
+                            <li class="file-list">bool_response.fbs</li>
+                            <li class="file-list">combined.fbs</li>
+                          </ul>
+                        </div>
+                      </details>
+                    </div>
+                  </details> -->
+                  
+                <!-- <button class="new-dir secondary outline container-fluid">Create New Directory</button> -->
+                <!-- <ul>
+                    <li>Directory
+                        <ul class="file-list">
+                            <li class="file-list">Monster.fbs</li>
+                            <li class="file-list">Weapon.fbs</li>
+                        </ul>
+                    </li>
+                </ul> -->
+            </section>
+        </aside>
+
+        <main style="width: 70%;">
+            <article>
+                <section>
+                    <hgroup id="version">
+                        <h3>Fb<small>2</small>JSON</h3>
+                        <p id="flatc-version">---</p>
+                    </hgroup>
+                    <fieldset class="button-radio">
+                        <legend>Use Root</legend>
+                        <section id="flatc-tables">
+                            <!-- populated on selecting a file  -->
+                            <em>select a file</em>
+                        </section>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Data Format</legend>
+                        <section>
+                            <input type="radio" id="base64" name="format" value="base64" checked />
+                            <label for="base64">BASE64</label>
+                            <input type="radio" id="dec" name="format" value="dec">
+                            <label for="dec">Uint8Array</label>
+                            <!-- <input type="radio" id="hex" name="format" value="hex">
+                            <label for="hex">HEX</label> -->
+                        </section>
+                    </fieldset>
+                    <section>
+                        <p id="info" class="info">&nbsp;</p>
+                        <textarea id="userInput" spellcheck="false" rows="7" onpaste="handleTextInput(event)"
+                            onblur="handleTextInput(event)"></textarea>
+                        <button id="parse" class="primary" disabled onclick="handleParseData()">Parse</button>
+                    </section>
+                    <!-- <section id="extraDiv">
+                        <article>JSON</article>
+                    </section> -->
+                </section>
+                <section class="footer"><a tabindex="-1" class="release-notes" data-tooltip="Help" title="palaniraja" onclick="toggleAboutDialog()">v4.0</a></section>
+            </article>
+            <section id="history-items">
+                <!-- populated on selecting a file  -->
+            </section>
+            
+            <dialog id="about-dialog">
+                <article>
+                    <header>
+                        <button aria-label="Close" rel="prev" onclick="toggleAboutDialog()"></button>
+                        <p>
+                            <strong>Fb2JSON v4.0</strong>
+                        </p>
+                    </header>
+                    <p>
+                        View JSON representation of a flatbuffer binary data.
+                    </p>
+                    <h4>Features</h4>
+                    <ul>
+                        <li>Works with BASE64 and Uint8Array types</li>
+                        <li>Auto-detect input types</li>
+                        <li>Smart schema selection</li>
+                        <li>History</li>
+                    </ul>
+                </article>
+            </dialog>
+        </main>
+    </div>
+
+    <!-- Templates -->
+    <template id="fbs-root-template">
+        <input class="fbs-root-input" type="radio" name="root" />
+        <label class="fbs-root-label"></label>
+    </template>
+
+    <template id="history-item-template">
+        <article>
+            <mark class="fbs-root">root</mark> <small><mark class="fbs-data-type">0x</mark></small>
+            <em class="fbs-file">filename.fbs</em>
+            <p>
+            <section class="pre fbs-data"></section>
+            <section class="pre fbs-json"></section>
+            </p>
+        </article>
+    </template>
+
+    <!-- Custom Context Menu -->
+    <ul id="context-menu" class="context-menu">
+    <li id="delete-option"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M4 7l16 0" />
+        <path d="M10 11l0 6" />
+        <path d="M14 11l0 6" />
+        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+      </svg> Delete</li>
+    </ul>
+
+</body>
+
+</html>
