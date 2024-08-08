@@ -469,7 +469,6 @@ function autoDetectInputDataFormat(userInput) {
         return;
     }
 
-    console.log(`input: [${userInput}]`);
 
     const intArrayRegex = /^(\d+[\s,]*)+$/;
     if (intArrayRegex.test(userInput)) {
@@ -481,7 +480,7 @@ function autoDetectInputDataFormat(userInput) {
     //take another pass for base64 by removing newline and spaces
     userInput = userInput.replace(/[\n\s]/g, "");
 
-    console.log(`input-pass2: [${userInput}]`);
+    
 
     const base64Regex =
         /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
@@ -491,6 +490,8 @@ function autoDetectInputDataFormat(userInput) {
         );
         return { type: "base64", value: uint8Array };
     }
+
+    console.log(`input-pass2: [${userInput}]`);
 
     throw new Error("Not a valid BASE64 or Int array");
 }
