@@ -311,13 +311,13 @@ var AppUI = {
 function updateUIElement(el, prop, value, delay) {
     let d = delay || 10;
 
-    // setTimeout(() => {
-    //     el[prop] = value;
-    // }, d);
-
-    Promise.resolve().then(() => {
+    setTimeout(() => {
         el[prop] = value;
-    });
+    }, d);
+
+    // Promise.resolve().then(() => {
+    //     el[prop] = value;
+    // });
 }
 
 function uiUpdateInfo(msg, success) {
