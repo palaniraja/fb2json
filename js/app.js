@@ -155,7 +155,7 @@ function processWithFlatc() {
         .catch((err) => {
             console.log("processWithFlatc err", err);
             updateUIElement(AppUI.parseButton, "disabled", true);
-            State.error = err;
+            State.error = "Unable to decode";
             if (err.status == 0) {
                 out = jsStdOut[0];
                 console.info(out);
@@ -309,8 +309,9 @@ var AppUI = {
 };
 
 function updateUIElement(el, prop, value, delay) {
-    let d = delay || 10;
+    let d = delay || 20;
 
+    //because windows...
     setTimeout(() => {
         el[prop] = value;
     }, d);
@@ -480,8 +481,6 @@ function autoDetectInputDataFormat(userInput) {
     //take another pass for base64 by removing newline and spaces
     userInput = userInput.replace(/[\n\s]/g, "");
 
-    
-
     const base64Regex =
         /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
     if (base64Regex.test(userInput)) {
@@ -491,7 +490,7 @@ function autoDetectInputDataFormat(userInput) {
         return { type: "base64", value: uint8Array };
     }
 
-    console.log(`input-pass2: [${userInput}]`);
+    // console.log(`input-pass2: [${userInput}]`);
 
     throw new Error("Not a valid BASE64 or Int array");
 }
@@ -593,6 +592,8 @@ function validateInputs() {
 function handleTextInput(event) {
     let data = "";
 
+    console.log("handleTextInput called");
+
     if (event.type === "paste") {
         let pasteData = (event.clipboardData || window.clipboardData).getData(
             "text"
@@ -623,7 +624,7 @@ function handleTextInput(event) {
             validateInputs();
         } catch (err) {
             console.log(err);
-            State.error = `Couldn't detect input data type`;
+            State.error = `Couldn't detect input data type, invalid?`;
             updateUIElement(AppUI.parseButton, "disabled", true);
         }
     } else {
@@ -934,7 +935,7 @@ function restoreExplorer() {
                 }
             }
         }
-    }, 100);
+    }, 100);//i know
 }
 
 function toggleDir(e) {
@@ -1009,7 +1010,7 @@ function deleteDir(target) {
             target.setAttribute("aria-busy", "true");
             // deleteDirectoryRecursively(dPath);
             deleteAllFilesInPath(dPath);
-            setTimeout(listFilesInWasmFS, 3000);
+            setTimeout(listFilesInWasmFS, 3000); //i know
         }
     }
 }
