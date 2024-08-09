@@ -411,11 +411,8 @@ function prependFBHistory(FBHistory) {
     newNode.querySelector(".fbs-data").textContent = FBHistory.data;
     newNode.querySelector(".fbs-json").textContent = FBHistory.json; //JSON.stringify(JSON.parse(FBHistory.json), null, '\t');
 
-
-    // Select the element with the class "delete-history-item"
     var delHistory = newNode.querySelector(".delete-history-item");
 
-    // Add an onclick event listener to the delete button
     delHistory.addEventListener("click", function () {
         let opt = confirm("Remove from view?")
         if (opt) {
