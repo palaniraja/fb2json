@@ -281,3 +281,10 @@ h3 small{
 dialog {
     background-color: var(--pico-contrast-underline);
 }
+
+
+.delete-history-item{
+    color: var(--pico-form-element-invalid-active-border-color);
+    cursor: pointer;
+    float: right;
+}
