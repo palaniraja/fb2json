@@ -410,6 +410,25 @@ function prependFBHistory(FBHistory) {
     );
     newNode.querySelector(".fbs-data").textContent = FBHistory.data;
     newNode.querySelector(".fbs-json").textContent = FBHistory.json; //JSON.stringify(JSON.parse(FBHistory.json), null, '\t');
+
+
+    // Select the element with the class "delete-history-item"
+    var delHistory = newNode.querySelector(".delete-history-item");
+
+    // Add an onclick event listener to the delete button
+    delHistory.addEventListener("click", function () {
+        let opt = confirm("Remove from view?")
+        if (opt) {
+            let articleToRemove = this.closest("article");
+            if (articleToRemove) {
+                articleToRemove.remove();
+            }
+        }
+
+    });
+
+
+
     container.prepend(newNode);
 }
 
@@ -591,8 +610,6 @@ function validateInputs() {
 
 function handleTextInput(event) {
     let data = "";
-
-    console.log("handleTextInput called");
 
     if (event.type === "paste") {
         let pasteData = (event.clipboardData || window.clipboardData).getData(
