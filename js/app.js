@@ -1,5 +1,5 @@
 /** Brought to you by Palani's 4 weekends in summer'24
- * 
+ *
  *  Please Subscribe, Like and click the Bell icon :-P
  */
 
@@ -105,6 +105,7 @@ function processWithFlatc() {
     let args = [
         "flatc",
         "--json",
+        "--strict-json",
         "--defaults-json",
         "--raw-binary",
         "--root-type",
@@ -409,29 +410,29 @@ function prependFBHistory(FBHistory) {
         ""
     );
     newNode.querySelector(".fbs-data").textContent = FBHistory.data;
-    newNode.querySelector(".fbs-json").textContent = FBHistory.json; //JSON.stringify(JSON.parse(FBHistory.json), null, '\t');
+
+    try {
+        let smartJson = renderJson(JSON.parse(FBHistory.json));
+        newNode.querySelector(".fbs-json").innerHTML = smartJson;
+    } catch (err) {
+        newNode.querySelector(".fbs-json").innerHTML = FBHistory.json;
+    }
 
     var delHistory = newNode.querySelector(".delete-history-item");
 
     delHistory.addEventListener("click", function () {
-        let opt = confirm("Remove from view?")
-        if (opt) {
-            let articleToRemove = this.closest("article");
-            if (articleToRemove) {
-                articleToRemove.remove();
-            }
+        // let opt = confirm("Remove from view?");
+        // if (opt) {
+        let articleToRemove = this.closest("article");
+        if (articleToRemove) {
+            articleToRemove.remove();
         }
-
+        // }
     });
-
-
 
     container.prepend(newNode);
 }
 
-// function uiUpdateExplorerView(files) {
-//     AppUI.explorer.innerHTML = generateHTML(files);
-// }
 
 /**
  * === UTILS ===
@@ -480,12 +481,10 @@ function strippedInput(inputString) {
     return inputString.replace(/[\[\]\(\)\'\"\r\n]/g, "");
 }
 
-
 function autoDetectInputDataFormat(userInput) {
     if (userInput.length < 1) {
         return;
     }
-
 
     const intArrayRegex = /^(\d+[\s,]*)+$/;
     if (intArrayRegex.test(userInput)) {
@@ -510,6 +509,37 @@ function autoDetectInputDataFormat(userInput) {
 
     throw new Error("Not a valid BASE64 or Int array");
 }
+
+const today = Math.floor(Date.now() / 1000);
+const validTimeWindow = 1 * 365 * 24 * 60 * 60; // ±1yr window
+
+const renderJson = (json, indent = 2) => {
+    if (typeof json === "object" && json !== null) {
+        const entries = Object.entries(json)
+            .map(([key, value]) => {
+                return `${" ".repeat(indent)}${key}: ${renderJson(
+                    value,
+                    indent + 2
+                )}`;
+            })
+            .join(",\n");
+        return `{\n${entries}\n${" ".repeat(indent - 2)}}`;
+    }
+    if (typeof json === "string") {
+        return `"${json}"`;
+    }
+    else if (typeof json === "number") {
+        const reasonableTs =
+            json > today - validTimeWindow && json < today + validTimeWindow;
+        if (reasonableTs) {
+            const tooltipContent = `${new Date(json * 1000).toLocaleString()}?`;
+            return `<span class="timestamp" data-placement="right" data-tooltip="${tooltipContent}">${json}</span>`;
+        } else {
+            return json;
+        }
+    }
+    return json;
+};
 
 /**
  * === Explorer events ===
@@ -756,7 +786,9 @@ function updateFilesRead() {
                 // console.log("All dropped files content read");
                 writeToIDBFS(droppedFileContent, wasmFSRoot)
                     .then(() =>
-                        console.log("All files created successfully in writeToIDBFS")
+                        console.log(
+                            "All files created successfully in writeToIDBFS"
+                        )
                     )
                     .catch((err) => console.log("Error creating files:", err));
                 setTimeout(listFilesInWasmFS, 2000);
@@ -949,7 +981,7 @@ function restoreExplorer() {
                 }
             }
         }
-    }, 100);//i know
+    }, 100); //i know
 }
 
 function toggleDir(e) {
